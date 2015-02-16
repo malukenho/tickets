@@ -1,7 +1,5 @@
 <?php
 
-use Zend\Db\Adapter\Adapter;
-
 return [
     'zfcuser' => [
         'enable_registration'               => true,
