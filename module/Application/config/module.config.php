@@ -53,6 +53,19 @@ return [
                     ],
                 ],
                 'child_routes' => [
+                    'view' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/view/:ticketId',
+                            'constraints' => [
+                                'ticketId' => '[a-zA-Z-0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'view',
+                            ],
+                        ],
+                    ],
                     'form' => [
                         'type'    => Literal::class,
                         'options' => [
