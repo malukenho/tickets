@@ -18,6 +18,7 @@
 
 namespace Application\Form;
 
+use Application\Enum\Project;
 use Zend\Form\Form;
 use Zend\Http\Request;
 
@@ -62,11 +63,10 @@ class Ticket extends Form
             'options' => [
                 'label' => 'Importance',
                 'value_options' => [
-                    // @todo use class constants, when we have them
-                    1 => 'Low',
-                    2 => 'Medium',
-                    3 => 'High',
-                    4 => 'Emergency',
+                    1 => Project::LOW_PRIORITY,
+                    2 => Project::MEDIUM_PRIORITY,
+                    3 => Project::HIGH_PRIORITY,
+                    4 => Project::EMERGENCY_PRIORITY,
                 ]
             ],
         ]);
