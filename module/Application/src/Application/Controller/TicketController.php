@@ -18,6 +18,7 @@
 
 namespace Application\Controller;
 
+use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\TicketCommandHandler;
@@ -25,7 +26,6 @@ use Application\Command\Ticket\TicketIdentifier;
 use Application\Entity\Ticket as TicketEntity;
 use Application\Form\Ticket;
 use Doctrine\ORM\EntityManager;
-use Zend\Form\FormElementManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -36,17 +36,14 @@ class TicketController extends AbstractActionController
      */
     protected $commandHandler;
     /**
-     * @var FormElementManager
+     * @var Ticket
      */
-    protected $formManager;
+    protected $ticketForm;
 
-    //@TODO inject the form directly, not the FormElementManager.
-    public function __construct(
-        CommandBus $commandHandler,
-        FormElementManager $formManager
-    ) {
+    public function __construct(CommandBus $commandHandler, Ticket $ticketForm)
+    {
         $this->commandHandler = $commandHandler;
-        $this->formManager    = $formManager;
+        $this->ticketForm     = $ticketForm;
     }
 
     public function indexAction()
@@ -62,13 +59,8 @@ class TicketController extends AbstractActionController
 
     public function openAction()
     {
-        // as said before, inject the form directly
-        $form = $this
-            ->formManager
-            ->get(Ticket::class);
-
         return new ViewModel([
-            'form' => $form
+            'form' => $this->ticketForm
         ]);
     }
 
@@ -114,7 +106,7 @@ class TicketController extends AbstractActionController
             new RemoveTicket(new TicketIdentifier($id))
         );
 
-        $this->redirect('ticket-index');
+        $this->redirect('ticket');
     }
 
     /**

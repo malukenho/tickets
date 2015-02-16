@@ -18,8 +18,6 @@
 
 namespace Application\Command\Ticket;
 
-use InvalidArgumentException;
-
 class TicketIdentifier
 {
     /**
@@ -32,10 +30,6 @@ class TicketIdentifier
      */
     public function __construct($identifier)
     {
-        if (! is_numeric($identifier)) {
-            throw new InvalidArgumentException('Ticket identifier need to be a numeric value.');
-        }
-
         $this->identifier = (int) $identifier;
     }
 
