@@ -16,8 +16,10 @@
  * and is licensed under the MIT license.
  */
 
-use Application\Command\Ticket\TicketCommandHandler;
-use Doctrine\ORM\EntityManager;
+use Application\Command\Ticket\CommandBus;
+use Application\Command\Ticket\OpenNewTicket;
+use Application\Command\Ticket\RemoveTicket;
+use Application\Form\Ticket as FormTicket;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\IndexController;
 use Application\Controller\TicketController;
@@ -38,20 +40,9 @@ return [
                 ],
             ],
 
-            // not needed:
-//            'application' => [
-//                'type'    => Literal::class,
-//                'options' => [
-//                    'route'    => '/application',
-//                    'defaults' => [
-//                        'controller' => IndexController::class,
-//                        'action'     => 'index',
-//                    ],
-//                ],
-//            ],
-
             'ticket' => [
                 'type'    => Literal::class,
+                'may_terminate' => true,
                 'options' => [
                     'route'    => '/ticket',
                     'defaults' => [
@@ -59,44 +50,39 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ],
-
-            // move to child route
-            // if too complex, move to separate route config file
-            'open-ticket' => [
-                'type'    => Literal::class,
-                'options' => [
-                    // make this explicit (ticket open form page)
-                    'route'    => '/ticket/open-ticket-form',
-                    'defaults' => [
-                        'controller' => TicketController::class,
-                        'action'     => 'open',
+                'child_routes' => [
+                    'form' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/open-ticket-form-page',
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'open',
+                            ],
+                        ],
                     ],
-                ],
-            ],
-
-            'remove-ticket' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/ticket/remove/:id',
-                    'constraints' => [
-                        // won't work for UUIDs (for now)
-                        'action'     => '[0-9]{16}',
+                    'register' => [
+                        'type'    => Literal::class,
+                        'options' => [
+                            'route'    => '/register',
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'register',
+                            ],
+                        ],
                     ],
-                    'defaults' => [
-                        'controller' => TicketController::class,
-                        'action'     => 'removeTicket',
-                    ],
-                ],
-            ],
-
-            'register-ticket' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/ticket/register',
-                    'defaults' => [
-                        'controller' => TicketController::class,
-                        'action'     => 'register',
+                    'remove-ticket' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/remove/:id',
+                            'constraints' => [
+                                'action'     => '[a-zA-Z0-9]{16}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'removeTicket',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -119,12 +105,27 @@ return [
         ],
 
         'factories' => [
-            // move this to a factory class
-            TicketController::class => function ($em) {
-                $formManager   = $em->getServiceLocator()->get('FormElementManager');
-                $entityManager = $em->getServiceLocator()->get(EntityManager::class);
+            CommandBus::class => function ($em) {
+                $commandTicketCollection = [
+                    OpenNewTicket::class => OpenNewTicket::class,
+                    RemoveTicket::class  => RemoveTicket::class,
+                ];
 
-                return new TicketController(new TicketCommandHandler($entityManager), $formManager);
+                return new CommandBus($commandTicketCollection);
+            },
+            TicketController::class => function ($em) {
+
+                $ticketForm = $em
+                    ->getServiceLocator()
+                    ->get('FormElementManager')
+                    ->get(FormTicket::class);
+
+                $commandBus = $em->get(CommandBus::class);
+
+                return new TicketController(
+                    $commandBus,
+                    $ticketForm
+                );
             },
         ],
     ],
