@@ -93,7 +93,7 @@ class TicketController extends AbstractActionController
             );
         }
 
-        $this->postRedirectGet('ticket-index');
+        $this->postRedirectGet('ticket');
     }
 
     public function removeTicketAction()
