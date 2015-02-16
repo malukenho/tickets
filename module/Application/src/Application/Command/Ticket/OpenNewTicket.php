@@ -21,32 +21,51 @@ namespace Application\Command\Ticket;
 class OpenNewTicket
 {
     /**
-     * Should NOT reference the ticket entity directly: only serializable data allowed!
-     * Entities change over time
-     * Command never changes (it has happened, period)
-     *
-     * @var Ticket
+     * @var string
      */
-    //protected $ticketEntity;
-
     private $subject;
+    /**
+     * @var string
+     */
     private $description;
+    /**
+     * @var string
+     */
     private $importance;
+    /**
+     * @var string
+     */
     private $openedBy;
+    /**
+     * @var string
+     */
     private $projectId;
 
-    public function __construct($subject, $description, $importance, $projectId, $openedBy)
-    {
-        // maybe throw exceptions on invalid types?
-        $this->subject = (string) $subject;
+    /**
+     * Constructor.
+     *
+     * @param string $subject
+     * @param string $description
+     * @param string $importance
+     * @param string $projectId
+     * @param string $openedBy
+     */
+    public function __construct(
+        $subject,
+        $description,
+        $importance,
+        $projectId,
+        $openedBy
+    ) {
+        $this->subject     = (string) $subject;
         $this->description = $description;
-        $this->importance = $importance;
-        $this->projectId = $projectId; // project may not exist, but this must be a valid UUID format! (validate and throw exception)
-        $this->openedBy = $openedBy;
+        $this->importance  = $importance;
+        $this->projectId   = $projectId;
+        $this->openedBy    = $openedBy;
     }
 
     /**
-     * @return Ticket
+     * @return string
      */
     public function getSubject()
     {
@@ -54,7 +73,7 @@ class OpenNewTicket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -62,7 +81,7 @@ class OpenNewTicket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getImportance()
     {
@@ -70,7 +89,7 @@ class OpenNewTicket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getOpenedBy()
     {
@@ -78,7 +97,7 @@ class OpenNewTicket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getProjectId()
     {

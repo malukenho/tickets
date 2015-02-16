@@ -2,7 +2,7 @@
 
 <div class="container">
     <div class="row">
-        <a href="<?php echo $this->url; ?>/ticket/open" class="btn btn-success">Open new</a>
+        <a href="<?php echo $this->url('ticket/form'); ?>" class="btn btn-success">Open new</a>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
             <?php foreach ($this->tickets as $ticket) : ?>
                 <tr>
                     <td><?php echo $ticket->getSubject(); ?></td>
-                    <td><a href="<?php echo $this->url(); ?>/remove/<?php echo $ticket->getId(); ?>">remove</a></td>
+                    <td><a href="<?php echo $this->url('ticket/remove', ['id' => $ticket->getId()]); ?>">remove</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

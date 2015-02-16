@@ -73,12 +73,12 @@ return [
                             ],
                         ],
                     ],
-                    'remove-ticket' => [
+                    'remove' => [
                         'type'    => Segment::class,
                         'options' => [
                             'route'    => '/remove/:id',
                             'constraints' => [
-                                'action'     => '[a-zA-Z0-9]{16}',
+                                'id'     => '[a-zA-Z0-9]{16}',
                             ],
                             'defaults' => [
                                 'controller' => TicketController::class,
