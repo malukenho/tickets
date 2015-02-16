@@ -20,11 +20,13 @@ use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Form\Ticket as FormTicket;
+use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\IndexController;
 use Application\Controller\TicketController;
 use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Application\Entity\Ticket as TicketEntity;
 
 return [
     'router' => [
@@ -92,8 +94,14 @@ return [
     // delete
     'service_manager' => [
         'factories' => [
-            // @todo to be defined:
-            'MyCommandBus' => 'CommandBusFactory',
+            CommandBus::class => function ($em) {
+                $commandTicketCollection = [
+                    OpenNewTicket::class => OpenNewTicket::class,
+                    RemoveTicket::class  => RemoveTicket::class,
+                ];
+
+                return new CommandBus($commandTicketCollection);
+            },
         ],
         'abstract_factories' => [
         ],
@@ -105,26 +113,24 @@ return [
         ],
 
         'factories' => [
-            CommandBus::class => function ($em) {
-                $commandTicketCollection = [
-                    OpenNewTicket::class => OpenNewTicket::class,
-                    RemoveTicket::class  => RemoveTicket::class,
-                ];
-
-                return new CommandBus($commandTicketCollection);
-            },
             TicketController::class => function ($em) {
 
-                $ticketForm = $em
-                    ->getServiceLocator()
+                $serviceLocator = $em->getServiceLocator();
+
+                $ticketForm = $serviceLocator
                     ->get('FormElementManager')
                     ->get(FormTicket::class);
 
-                $commandBus = $em->get(CommandBus::class);
+                $ticketRepository = $serviceLocator
+                    ->get(EntityManager::class)
+                    ->getRepository(TicketEntity::class);
+
+                $commandBus = $serviceLocator->get(CommandBus::class);
 
                 return new TicketController(
                     $commandBus,
-                    $ticketForm
+                    $ticketForm,
+                    $ticketRepository
                 );
             },
         ],
