@@ -21,68 +21,82 @@ namespace Application\Controller;
 use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
-use Application\Command\Ticket\TicketCommandHandler;
 use Application\Command\Ticket\TicketIdentifier;
-use Application\Entity\Ticket as TicketEntity;
+use Application\Filter\Ticket as TicketFilter;
 use Application\Form\Ticket;
-use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class TicketController extends AbstractActionController
 {
     /**
-     * @var TicketCommandHandler
+     * @var CommandBus
      */
-    protected $commandHandler;
+    protected $commandBus;
     /**
      * @var Ticket
      */
     protected $ticketForm;
 
-    public function __construct(CommandBus $commandHandler, Ticket $ticketForm)
+    protected $ticketRepository;
+
+    public function __construct(CommandBus $commandHandler, Ticket $ticketForm, $repository)
     {
-        $this->commandHandler = $commandHandler;
-        $this->ticketForm     = $ticketForm;
+        $this->commandBus       = $commandHandler;
+        $this->ticketForm       = $ticketForm;
+        $this->ticketRepository = $repository;
     }
 
     public function indexAction()
     {
-        // inject the repository directly instead (constructor)?
-        $tickets = $this
-            ->getEntityManager()
-            ->getRepository(TicketEntity::class)
-            ->findAll();
+        $tickets = $this->ticketRepository->findAll();
 
         return new ViewModel(['tickets' => $tickets]);
     }
 
+    public function viewAction()
+    {
+        return new ViewModel();
+    }
+
     public function openAction()
     {
+        $request = $this->getRequest();
+        $form    = $this->ticketForm;
+
+        if ($request->isPost()) {
+
+            $ticketFilter = new TicketFilter();
+            $form->setInputFilter($ticketFilter->getInputFilter());
+            $form->setData($request->getPost()->toArray());
+
+            if ($form->isValid()) {
+                return $this->registerNewTicket($form->getData());
+            }
+        }
+
         return new ViewModel([
-            'form' => $this->ticketForm
+            'form' => $form
         ]);
     }
 
-    public function registerAction()
+    public function removeTicketAction()
     {
-        // no form validation?
-        $params = $this->params()->fromPost();
+        $id = $this->params('id');
+        $this->commandBus->handle(new RemoveTicket($id));
 
-//        $this->form->setData($this->params()->fromPost());
-//
-//        if (! $this->form->isValid()) {
-//            return $this->openAction();
-//        }
-//
-//        $validData = $form->getValues();
-        $result = $this->commandHandler->handle(
+        $this->redirect('ticket');
+    }
+
+    protected function registerNewTicket(array $validData)
+    {
+        $result = $this->commandBus->handle(
             new OpenNewTicket(
-                $validData['subject'], // to be fetched from validated data!
-                $validData['description'], // to be fetched from validated data!
-                $validData['importance'], // to be fetched from validated data!
+                $validData['subject'],
+                $validData['description'],
+                $validData['importance'],
                 1, // @todo probably not needed
-                1 // @todo $this->authService->getIdentity()->getId()
+                1  // @todo $this->authService->getIdentity()->getId()
             )
         );
 
@@ -92,32 +106,5 @@ class TicketController extends AbstractActionController
                 ['ticketId' => $result->getTicketId()]
             );
         }
-
-        $this->postRedirectGet('ticket');
-    }
-
-    public function removeTicketAction()
-    {
-        $id = $this->params('id');
-
-        $this->commandHandler->handleRemoveTicket(
-            // not sure if `TicketIdentifier` is really needed for now (too complex)
-            // just $id is ok
-            new RemoveTicket(new TicketIdentifier($id))
-        );
-
-        $this->redirect('ticket');
-    }
-
-    /**
-     * @return EntityManager
-     *
-     * Don't inject the EntityManager in Controllers - only repositories allowed!
-     */
-    protected function getEntityManager()
-    {
-        return $this
-            ->getServiceLocator()
-            ->get(EntityManager::class);
     }
 }
