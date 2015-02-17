@@ -34,10 +34,6 @@ class Ticket
      */
     private $id;
     /**
-     * @ORM\Column(name="project_id", type="integer")
-     */
-    //private $projectId;
-    /**
      * @ORM\Column(name="subject", type="text", length=255)
      */
     private $subject;
@@ -64,8 +60,7 @@ class Ticket
 
     public function __construct()
     {
-        // example for UUIDs:
-        $this->id = Uuid::uuid4();
+        $this->id = Uuid::uuid1();
     }
 
     /**
@@ -77,50 +72,12 @@ class Ticket
     }
 
     /**
-     * @param mixed $responsible
-     */
-//    public function setResponsible($responsible)
-//    {
-//        $this->responsible = $responsible;
-//    }
-
-    /**
      * @return string
      */
     public function getId()
     {
         return $this->id;
     }
-
-    /**
-     * Remove ALL setters for IDs (ID _NEVER EVER_ changes)
-     *
-     * @param mixed $id
-     */
-//    public function setId($id)
-//    {
-//        $this->id = $id;
-//    }
-
-    /**
-     * Project will probably not be needed
-     *
-     * Also, the methods should set/get a Project entity, not a Project ID
-     *
-     * @return Project
-     */
-//    public function getProject()
-//    {
-//        return $this->project;
-//    }
-
-    /**
-     * @param mixed $projectId
-     */
-//    public function setProject(Project $project)
-//    {
-//        $this->project = $project;
-//    }
 
     /**
      * @return mixed
@@ -131,33 +88,12 @@ class Ticket
     }
 
     /**
-     * Avoid setters: instead, write methods such as `updateFromTicketUpdateRequest(...)`
-     *
-     * Getting information: ok
-     * Setting information: it's an action, therefore it should be worded accordingly
-     *
-     * @param mixed $subject
-     */
-//    public function setSubject($subject)
-//    {
-//        $this->subject = $subject;
-//    }
-
-    /**
      * @return mixed
      */
     public function getDescription()
     {
         return $this->description;
     }
-
-    /**
-     * @param mixed $description
-     */
-//    public function setDescription($description)
-//    {
-//        $this->description = $description;
-//    }
 
     /**
      * @return mixed
@@ -168,28 +104,12 @@ class Ticket
     }
 
     /**
-     * @param mixed $importance
-     */
-//    public function setImportance($importance)
-//    {
-//        $this->importance = $importance;
-//    }
-
-    /**
      * @return mixed
      */
     public function getOpenedBy()
     {
         return $this->openedBy;
     }
-
-    /**
-     * @param mixed $openedBy
-     */
-//    public function setOpenedBy($openedBy)
-//    {
-//        $this->openedBy = $openedBy;
-//    }
 
     /**
      * @return mixed
@@ -199,11 +119,17 @@ class Ticket
         return $this->active;
     }
 
-    /**
-     * @param mixed $active
-     */
-//    public function setActive($active)
-//    {
-//        $this->active = $active;
-//    }
+    public function updateTicketInformationFromOpenCommand(
+        $subject,
+        $description,
+        $importance,
+        $openedBy,
+        $active
+    ) {
+        $this->subject = $subject;
+        $this->description = $description;
+        $this->openedBy = $openedBy;
+        $this->active = $active;
+        $this->importance = $importance;
+    }
 }
