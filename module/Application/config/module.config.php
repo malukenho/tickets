@@ -19,6 +19,7 @@
 use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
+use Application\Command\Ticket\TicketCommandHandler;
 use Application\Form\Ticket as FormTicket;
 use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
@@ -58,7 +59,7 @@ return [
                         'options' => [
                             'route'    => '/view/:ticketId',
                             'constraints' => [
-                                'ticketId' => '[a-zA-Z-0-9]+',
+                                'ticketId' => '[a-zA-Z0-9-]{36}',
                             ],
                             'defaults' => [
                                 'controller' => TicketController::class,
@@ -91,7 +92,7 @@ return [
                         'options' => [
                             'route'    => '/remove/:id',
                             'constraints' => [
-                                'id'     => '[a-zA-Z0-9]{16}',
+                                'id'     => '[a-zA-Z0-9-]{36}',
                             ],
                             'defaults' => [
                                 'controller' => TicketController::class,
@@ -104,16 +105,18 @@ return [
         ],
     ],
 
-    // delete
     'service_manager' => [
         'factories' => [
             CommandBus::class => function ($em) {
                 $commandTicketCollection = [
-                    OpenNewTicket::class => OpenNewTicket::class,
-                    RemoveTicket::class  => RemoveTicket::class,
+                    OpenNewTicket::class => 'handleOpenNewTicket',
+                    RemoveTicket::class  => 'handleRemoveTicket',
                 ];
 
-                return new CommandBus($commandTicketCollection);
+                $entityManager = $em->get(EntityManager::class);
+                $ticketCommandHandler = new TicketCommandHandler($entityManager);
+
+                return new CommandBus($commandTicketCollection, $ticketCommandHandler);
             },
         ],
         'abstract_factories' => [

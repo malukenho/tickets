@@ -18,6 +18,7 @@
 
 namespace Application\Form;
 
+use Application\Filter\Ticket as TicketForm;
 use Application\Enum\Project;
 use Zend\Form\Form;
 use Zend\Http\Request;
@@ -29,6 +30,7 @@ class Ticket extends Form
         parent::__construct($name, $options);
 
         $this->setAttribute('method', Request::METHOD_POST);
+//        $this->setInputFilter(new TicketForm());
 
         $this->add([
             'name' => 'id',
