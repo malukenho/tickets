@@ -18,8 +18,14 @@
 
 namespace Application\Command\Ticket;
 
+use Rhumsaa\Uuid\Uuid;
+
 class OpenNewTicket
 {
+    /**
+     * @var string
+     */
+    private $uuid;
     /**
      * @var string
      */
@@ -57,11 +63,17 @@ class OpenNewTicket
         $projectId,
         $openedBy
     ) {
-        $this->subject     = (string) $subject;
+        $this->uuid        = Uuid::uuid1();
+        $this->subject     = $subject;
         $this->description = $description;
         $this->importance  = $importance;
         $this->projectId   = $projectId;
         $this->openedBy    = $openedBy;
+    }
+
+    public function getUuid()
+    {
+        return $this->uuid;
     }
 
     /**

@@ -18,26 +18,40 @@
 
 namespace Application\Command\Ticket;
 
-class RemoveTicket
+class CommandBus
 {
     /**
-     * @var string
+     * @var array
      */
-    private $identifier;
+    private $handlers;
+    /**
+     * @var TicketCommandHandler
+     */
+    private $commandHandler;
 
     /**
-     * @param string $identifier
+     * @param array                $handlers
+     * @param TicketCommandHandler $commandHandler
      */
-    public function __construct($identifier)
+    public function __construct(array $handlers, TicketCommandHandler $commandHandler)
     {
-        $this->identifier = $identifier;
+        $this->handlers       = $handlers;
+        $this->commandHandler = $commandHandler;
     }
 
     /**
-     * @return string
+     * @param  object $command
+     *
+     * @return object
      */
-    public function getIdentifier()
+    public function handle($command)
     {
-        return $this->identifier;
+        $commandName = get_class($command);
+
+        if (isset($this->handlers[$commandName])) {
+            $handler = $this->handlers[$commandName];
+
+            return $this->commandHandler->$handler($command);
+        }
     }
 }

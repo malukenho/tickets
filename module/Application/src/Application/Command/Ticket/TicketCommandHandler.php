@@ -20,6 +20,7 @@ namespace Application\Command\Ticket;
 
 use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasCreated;
+use Application\Event\Ticket\TicketWasRemoved;
 use Doctrine\ORM\EntityManager;
 use Zend\Di\ServiceLocator;
 
@@ -39,22 +40,15 @@ class TicketCommandHandler
     {
         $ticket = new Ticket();
 
-        $user    = $this->entityManager->find('User', $command->getOpenedBy());
-        $project = $this->entityManager->find('Project', $command->getProjectId());
-
-        if (! $user) {
-            throw new \DomainException(sprintf('No user found for ID %s', $command->getOpenedBy()));
-        }
-
-        $ticket->fromOpenCommand(
+        $ticket->updateTicketInformationFromOpenCommand(
             $command->getSubject(),
             $command->getDescription(),
             $command->getImportance(),
-            $user,
-            $project
+            1,
+            2
         );
 
-        $this->entityManager->persist($command->getEntity());
+        $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
         return new TicketWasCreated($ticket->getId());
@@ -68,5 +62,7 @@ class TicketCommandHandler
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return new TicketWasRemoved($command->getIdentifier());
     }
 }
