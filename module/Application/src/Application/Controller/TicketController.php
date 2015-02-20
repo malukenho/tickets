@@ -85,6 +85,26 @@ class TicketController extends AbstractActionController
         ]);
     }
 
+    public function editTicketAction()
+    {
+        $form     = $this->ticketForm;
+        $ticketId = $this->params('ticketId');
+
+        $ticketInformation = $this->ticketRepository->findOneById($ticketId);
+
+        $form->setData([
+            'subject'     => $ticketInformation->getSubject(),
+            'description' => $ticketInformation->getDescription(),
+            'importance'  => $ticketInformation->getImportance(),
+        ]);
+
+        $form->get('submit')->setValue('Update');
+
+        return new ViewModel([
+            'form' => $form
+        ]);
+    }
+
     public function removeTicketAction()
     {
         $id = $this->params('id');

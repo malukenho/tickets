@@ -88,6 +88,19 @@ return [
                             ],
                         ],
                     ],
+                    'edit' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/edit/:ticketId',
+                            'constraints' => [
+                                'ticketId'     => '[a-zA-Z0-9-]{36}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'editTicket',
+                            ],
+                        ],
+                    ],
                     'remove' => [
                         'type'    => Segment::class,
                         'options' => [
