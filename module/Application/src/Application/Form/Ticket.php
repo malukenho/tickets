@@ -18,7 +18,7 @@
 
 namespace Application\Form;
 
-use Application\Filter\Ticket as TicketForm;
+use Application\Filter\Ticket as TicketFormFilter;
 use Application\Enum\Project;
 use Zend\Form\Form;
 use Zend\Http\Request;
@@ -30,7 +30,6 @@ class Ticket extends Form
         parent::__construct($name, $options);
 
         $this->setAttribute('method', Request::METHOD_POST);
-//        $this->setInputFilter(new TicketForm());
 
         $this->add([
             'name' => 'id',
@@ -69,21 +68,13 @@ class Ticket extends Form
                     2 => Project::MEDIUM_PRIORITY,
                     3 => Project::HIGH_PRIORITY,
                     4 => Project::EMERGENCY_PRIORITY,
-                ]
+                ],
             ],
         ]);
 
         $this->add([
             'name' => 'opened_by',
             'type' => 'hidden',
-        ]);
-
-        $this->add([
-            'name' => 'status',
-            'type' => 'select',
-            'options' => [
-                'label' => 'Status',
-            ],
         ]);
 
         $this->add([

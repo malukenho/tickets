@@ -22,7 +22,7 @@ use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\TicketIdentifier;
-use Application\Filter\Ticket as TicketFilter;
+use Application\Filter\Ticket as TicketFormFilter;
 use Application\Form\Ticket;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -56,7 +56,12 @@ class TicketController extends AbstractActionController
 
     public function viewAction()
     {
-        return new ViewModel();
+        $uuid   = $this->params()->fromRoute('ticketId');
+        $result = $this->ticketRepository->findOneById($uuid);
+
+        return new ViewModel([
+            'ticketData' => $result
+        ]);
     }
 
     public function openAction()
@@ -65,9 +70,10 @@ class TicketController extends AbstractActionController
         $form    = $this->ticketForm;
 
         if ($request->isPost()) {
-            $ticketFilter = new TicketFilter();
-            $form->setInputFilter($ticketFilter->getInputFilter());
-            $form->setData($request->getPost()->toArray());
+            $formFilter = new TicketFormFilter();
+            $form->setInputFilter($formFilter->getInputFilter());
+
+            $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 return $this->registerNewTicket($form->getData());
@@ -84,7 +90,7 @@ class TicketController extends AbstractActionController
         $id = $this->params('id');
         $this->commandBus->handle(new RemoveTicket($id));
 
-        $this->redirect('ticket');
+        $this->redirect()->toRoute('ticket');
     }
 
     protected function registerNewTicket(array $validData)
@@ -100,9 +106,9 @@ class TicketController extends AbstractActionController
         );
 
         if ($result) {
-            return $this->redirect(
+            return $this->redirect()->toRoute(
                 'ticket/view',
-                ['ticketId' => $result->getTicketId()]
+                ['ticketId' => $result->getTicketId()->toString()]
             );
         }
     }

@@ -22,15 +22,16 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
+use BadMethodCallException;
 
 class Ticket implements InputFilterAwareInterface
 {
-    protected $subject;
-    protected $description;
-    protected $importance;
+    public $subject;
+    public $description;
+    public $importance;
     protected $inputFilter;
 
-    public function exchangeArray($data)
+    public function exchangeArray(array $data)
     {
         $this->subject     = isset($data['subject'])     ? $data['subject']     : null;
         $this->description = isset($data['description']) ? $data['description'] : null;
@@ -39,7 +40,7 @@ class Ticket implements InputFilterAwareInterface
 
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
-        throw new \Exception("Not used");
+        throw new BadMethodCallException("Not used");
     }
 
     public function getInputFilter()
@@ -60,10 +61,11 @@ class Ticket implements InputFilterAwareInterface
                     ['name' => 'StripTags'],
                 ],
                 'validators' => [
-                    ['name' => 'not_empty'],
+                    ['name' => 'NotEmpty'],
                     [
-                        'name' => 'string_length',
+                        'name' => 'StringLength',
                         'options' => [
+                            'encoding' => 'UTF-8',
                             'min' => 5,
                         ],
                     ],
@@ -79,10 +81,11 @@ class Ticket implements InputFilterAwareInterface
                     ['name' => 'StringTrim'],
                 ],
                 'validators' => [
-                    ['name' => 'not_empty'],
+                    ['name' => 'NotEmpty'],
                     [
-                        'name' => 'string_length',
+                        'name' => 'StringLength',
                         'options' => [
+                            'encoding' => 'UTF-8',
                             'min' => 30,
                         ],
                     ],
@@ -94,6 +97,9 @@ class Ticket implements InputFilterAwareInterface
             $factory->createInput([
                 'name'     => 'importance',
                 'required' => true,
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
             ])
         );
 

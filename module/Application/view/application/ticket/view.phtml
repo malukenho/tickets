@@ -1,1 +1,20 @@
-<h1>View</h1>
+<h1>Ticket Information</h1>
+
+<?php $ticket = $this->ticketData; ?>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <td><strong>Subject</strong></td>
+        <td><?php echo $ticket->getSubject(); ?></td>
+    </tr>
+    <tr>
+        <td><strong>Description</strong></td>
+        <td><?php echo nl2br($ticket->getDescription()); ?></td>
+    </tr>
+    <tr>
+        <td><strong>Importance</strong></td>
+        <td><?php echo $ticket->getImportance(); ?></td>
+    </tr>
+    </tbody>
+</table>

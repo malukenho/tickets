@@ -19,7 +19,10 @@
             <?php foreach ($this->tickets as $ticket) : ?>
                 <tr>
                     <td><?php echo $ticket->getSubject(); ?></td>
-                    <td><a href="<?php echo $this->url('ticket/remove', ['id' => $ticket->getId()]); ?>">remove</a></td>
+                    <td>
+                        <a href="<?php echo $this->url('ticket/view', ['ticketId' => $ticket->getId()]); ?>">view</a> |
+                        <a href="<?php echo $this->url('ticket/remove', ['id' => $ticket->getId()]); ?>">remove</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
