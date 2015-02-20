@@ -15,11 +15,21 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
-
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
-class CorporationController extends AbstractActionController
+class ConsultantController extends AbstractActionController
 {
+    public function __construct()
+    {
+        // @TODO: Implements
+    }
+
+    public function indexAction()
+    {
+        // @TODO implements
+        return new ViewModel();
+    }
 }

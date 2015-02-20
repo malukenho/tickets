@@ -65,7 +65,6 @@ class TicketController extends AbstractActionController
         $form    = $this->ticketForm;
 
         if ($request->isPost()) {
-
             $ticketFilter = new TicketFilter();
             $form->setInputFilter($ticketFilter->getInputFilter());
             $form->setData($request->getPost()->toArray());
