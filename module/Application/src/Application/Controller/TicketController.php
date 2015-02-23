@@ -47,17 +47,20 @@ class TicketController extends AbstractActionController
     protected $commentForm;
 
     protected $ticketRepository;
+    protected $commentRepository;
 
     public function __construct(
         CommandBus $commandHandler,
         Ticket $ticketForm,
         Comment $commentForm,
-        $repository
+        $ticketRepository,
+        $commentRepository
     ) {
-        $this->commandBus       = $commandHandler;
-        $this->ticketForm       = $ticketForm;
-        $this->commentForm      = $commentForm;
-        $this->ticketRepository = $repository;
+        $this->commandBus        = $commandHandler;
+        $this->ticketForm        = $ticketForm;
+        $this->commentForm       = $commentForm;
+        $this->ticketRepository  = $ticketRepository;
+        $this->commentRepository = $commentRepository;
     }
 
     public function indexAction()
@@ -69,12 +72,14 @@ class TicketController extends AbstractActionController
 
     public function viewAction()
     {
-        $uuid   = $this->params()->fromRoute('ticketId');
-        $result = $this->ticketRepository->findOneById($uuid);
+        $uuid     = $this->params()->fromRoute('ticketId');
+        $result   = $this->ticketRepository->findOneById($uuid);
+        $comments = $this->commentRepository->findBy(['ticket' => $uuid]);
 
         return new ViewModel([
-            'ticketData' => $result,
+            'ticketData'  => $result,
             'commentForm' => $this->commentForm,
+            'comments'    => $comments,
         ]);
     }
 

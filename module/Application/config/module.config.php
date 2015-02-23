@@ -23,6 +23,7 @@ use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketCommandHandler;
+use Application\Entity\Comment;
 use Application\Form\Comment as FormComment;
 use Application\Form\Ticket as FormTicket;
 use Doctrine\ORM\EntityManager;
@@ -194,9 +195,10 @@ return [
                 $ticketForm  = $formElementManager->get(FormTicket::class);
                 $commentForm = $formElementManager->get(FormComment::class);
 
-                $ticketRepository = $serviceLocator
-                    ->get(EntityManager::class)
-                    ->getRepository(TicketEntity::class);
+                $entityManager = $serviceLocator->get(EntityManager::class);
+
+                $ticketRepository  = $entityManager->getRepository(TicketEntity::class);
+                $commentRepository = $entityManager->getRepository(Comment::class);
 
                 $commandBus = $serviceLocator->get(CommandBus::class);
 
@@ -204,7 +206,8 @@ return [
                     $commandBus,
                     $ticketForm,
                     $commentForm,
-                    $ticketRepository
+                    $ticketRepository,
+                    $commentRepository
                 );
             },
         ],
