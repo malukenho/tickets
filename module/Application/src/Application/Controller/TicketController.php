@@ -18,9 +18,11 @@
 
 namespace Application\Controller;
 
+use Application\Command\Ticket\CloseTicket;
 use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
+use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketIdentifier;
 use Application\Filter\Ticket as TicketFormFilter;
 use Application\Form\Ticket;
@@ -107,10 +109,32 @@ class TicketController extends AbstractActionController
 
     public function removeTicketAction()
     {
-        $id = $this->params('id');
+        $id = $this->params('ticketId');
         $this->commandBus->handle(new RemoveTicket($id));
 
         $this->redirect()->toRoute('ticket');
+    }
+
+    public function closeTicketAction()
+    {
+        $id = $this->params('ticketId');
+        $result = $this->commandBus->handle(new CloseTicket($id));
+
+        return $this->redirect()->toRoute(
+            'ticket/view',
+            ['ticketId' => $result->getTicketIdentifier()]
+        );
+    }
+
+    public function solveTicketAction()
+    {
+        $id = $this->params('ticketId');
+        $result = $this->commandBus->handle(new SolveTicket($id));
+
+        return $this->redirect()->toRoute(
+            'ticket/view',
+            ['ticketId' => $result->getTicketIdentifier()]
+        );
     }
 
     protected function registerNewTicket(array $validData)

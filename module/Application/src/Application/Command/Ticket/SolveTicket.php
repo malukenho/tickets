@@ -18,19 +18,19 @@
 
 namespace Application\Command\Ticket;
 
-class RemoveTicket
+class SolveTicket
 {
     /**
      * @var string
      */
-    private $identifier;
+    private $uuid;
 
     /**
-     * @param string $identifier
+     * @param string $uuid
      */
-    public function __construct($identifier)
+    public function __construct($uuid)
     {
-        $this->identifier = $identifier;
+        $this->uuid = $uuid;
     }
 
     /**
@@ -38,6 +38,6 @@ class RemoveTicket
      */
     public function getTicketIdentifier()
     {
-        return $this->identifier;
+        return $this->uuid;
     }
 }

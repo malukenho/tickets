@@ -57,6 +57,10 @@ class Ticket
      * @ORM\Column(name="responsible", type="integer", length=20, nullable=true)
      */
     private $responsible;
+    /**
+     * @ORM\Column(name="solved", type="boolean", nullable=true, options={"default"=0})
+     */
+    private $solved;
 
     public function __construct()
     {
@@ -64,7 +68,7 @@ class Ticket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResponsible()
     {
@@ -74,13 +78,13 @@ class Ticket
     /**
      * @return string
      */
-    public function getId()
+    public function getTicketIdentifier()
     {
         return $this->id;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSubject()
     {
@@ -88,7 +92,7 @@ class Ticket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -96,7 +100,7 @@ class Ticket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getImportance()
     {
@@ -104,7 +108,7 @@ class Ticket
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getOpenedBy()
     {
@@ -112,11 +116,19 @@ class Ticket
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getSolved()
+    {
+        return $this->solved;
     }
 
     public function updateTicketInformationFromOpenCommand(
@@ -131,5 +143,15 @@ class Ticket
         $this->openedBy = $openedBy;
         $this->active = $active;
         $this->importance = $importance;
+    }
+
+    public function markAsClosed()
+    {
+        $this->active = false;
+    }
+
+    public function markAsSolved()
+    {
+        $this->solved = true;
     }
 }

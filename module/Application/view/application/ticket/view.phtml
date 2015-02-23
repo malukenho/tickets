@@ -1,12 +1,24 @@
+<?php $ticket = $this->ticketData; ?>
+
 <h1>Ticket Information</h1>
 
-<?php $ticket = $this->ticketData; ?>
+<p>
+    <?php if ($ticket->getSolved()) : ?>
+        <span class="label label-success">Solved</span>
+    <?php endif; ?>
+
+    <?php if (! $ticket->getActive()) : ?>
+        <span class="label label-danger">Closed</span>
+    <?php endif; ?>
+</p>
 
 <table class="table">
     <tbody>
     <tr>
         <td><strong>Subject</strong></td>
-        <td><?php echo $ticket->getSubject(); ?></td>
+        <td>
+            <?php echo $ticket->getSubject(); ?>
+        </td>
     </tr>
     <tr>
         <td><strong>Description</strong></td>
@@ -15,6 +27,17 @@
     <tr>
         <td><strong>Importance</strong></td>
         <td><?php echo $ticket->getImportance(); ?></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <?php if (! $ticket->getSolved()) : ?>
+                <a href="<?php echo $this->url('ticket/solve', [], null, true); ?>" class="btn btn-success">Mark as solved</a>
+            <?php endif; ?>
+
+            <?php if ($ticket->getActive()) : ?>
+                <a href="<?php echo $this->url('ticket/close', [], null, true); ?>" class="btn btn-danger">Close Ticket</a>
+            <?php endif; ?>
+        </td>
     </tr>
     </tbody>
 </table>

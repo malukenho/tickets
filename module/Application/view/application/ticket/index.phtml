@@ -20,8 +20,9 @@
                 <tr>
                     <td><?php echo $ticket->getSubject(); ?></td>
                     <td>
-                        <a href="<?php echo $this->url('ticket/view', ['ticketId' => $ticket->getId()]); ?>">view</a> |
-                        <a href="<?php echo $this->url('ticket/remove', ['id' => $ticket->getId()]); ?>">remove</a>
+                        <a href="<?php echo $this->url('ticket/edit', ['ticketId' => $ticket->getTicketIdentifier()]); ?>">edit</a> |
+                        <a href="<?php echo $this->url('ticket/view', ['ticketId' => $ticket->getTicketIdentifier()]); ?>">view</a> |
+                        <a href="<?php echo $this->url('ticket/remove', ['ticketId' => $ticket->getTicketIdentifier()]); ?>">remove</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

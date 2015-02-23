@@ -16,9 +16,11 @@
  * and is licensed under the MIT license.
  */
 
+use Application\Command\Ticket\CloseTicket;
 use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
+use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketCommandHandler;
 use Application\Form\Ticket as FormTicket;
 use Doctrine\ORM\EntityManager;
@@ -28,7 +30,6 @@ use Application\Controller\TicketController;
 use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Application\Entity\Ticket as TicketEntity;
-use Application\Controller\ConsultantController;
 
 return [
     'router' => [
@@ -68,6 +69,32 @@ return [
                             ],
                         ],
                     ],
+                    'close' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/close/:ticketId',
+                            'constraints' => [
+                                'ticketId' => '[a-zA-Z0-9-]{36}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'closeTicket',
+                            ],
+                        ],
+                    ],
+                    'solve' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/solve/:ticketId',
+                            'constraints' => [
+                                'ticketId' => '[a-zA-Z0-9-]{36}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'solveTicket',
+                            ],
+                        ],
+                    ],
                     'form' => [
                         'type'    => Literal::class,
                         'options' => [
@@ -104,7 +131,7 @@ return [
                     'remove' => [
                         'type'    => Segment::class,
                         'options' => [
-                            'route'    => '/remove/:id',
+                            'route'    => '/remove/:ticketId',
                             'constraints' => [
                                 'id'     => '[a-zA-Z0-9-]{36}',
                             ],
@@ -125,6 +152,8 @@ return [
                 $commandTicketCollection = [
                     OpenNewTicket::class => 'handleOpenNewTicket',
                     RemoveTicket::class  => 'handleRemoveTicket',
+                    CloseTicket::class   => 'handleCloseTicket',
+                    SolveTicket::class   => 'handleSolveTicket',
                 ];
 
                 $entityManager = $em->get(EntityManager::class);

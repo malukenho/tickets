@@ -19,8 +19,10 @@
 namespace Application\Command\Ticket;
 
 use Application\Entity\Ticket;
+use Application\Event\Ticket\TicketWasClosed;
 use Application\Event\Ticket\TicketWasCreated;
 use Application\Event\Ticket\TicketWasRemoved;
+use Application\Event\Ticket\TicketWasSolved;
 use Doctrine\ORM\EntityManager;
 use Zend\Di\ServiceLocator;
 
@@ -51,18 +53,42 @@ class TicketCommandHandler
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
-        return new TicketWasCreated($ticket->getId());
+        return new TicketWasCreated($ticket->getTicketIdentifier());
     }
 
     public function handleRemoveTicket(RemoveTicket $command)
     {
         $entity = $this->entityManager
             ->getRepository(Ticket::class)
-            ->findOneBy(['id' => $command->getIdentifier()]);
+            ->findOneBy(['id' => $command->getTicketIdentifier()]);
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new TicketWasRemoved($command->getIdentifier());
+        return new TicketWasRemoved($command->getTicketIdentifier());
+    }
+
+    public function handleCloseTicket(CloseTicket $command)
+    {
+        $entity = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+
+        $entity->markAsClosed();
+        $this->entityManager->flush();
+
+        return new TicketWasClosed($command->getTicketIdentifier());
+    }
+
+    public function handleSolveTicket(SolveTicket $command)
+    {
+        $entity = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+
+        $entity->markAsSolved();
+        $this->entityManager->flush();
+
+        return new TicketWasSolved($command->getTicketIdentifier());
     }
 }
