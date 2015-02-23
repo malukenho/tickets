@@ -18,10 +18,12 @@
 
 use Application\Command\Ticket\CloseTicket;
 use Application\Command\Ticket\CommandBus;
+use Application\Command\Ticket\CommentOnTicket;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketCommandHandler;
+use Application\Form\Comment as FormComment;
 use Application\Form\Ticket as FormTicket;
 use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
@@ -95,6 +97,19 @@ return [
                             ],
                         ],
                     ],
+                    'comment' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/comment/:ticketId',
+                            'constraints' => [
+                                'ticketId' => '[a-zA-Z0-9-]{36}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'comment',
+                            ],
+                        ],
+                    ],
                     'form' => [
                         'type'    => Literal::class,
                         'options' => [
@@ -154,6 +169,7 @@ return [
                     RemoveTicket::class  => 'handleRemoveTicket',
                     CloseTicket::class   => 'handleCloseTicket',
                     SolveTicket::class   => 'handleSolveTicket',
+                    CommentOnTicket::class   => 'handleCommentOnTicket',
                 ];
 
                 $entityManager = $em->get(EntityManager::class);
@@ -172,11 +188,11 @@ return [
         'factories' => [
             TicketController::class => function ($em) {
 
-                $serviceLocator = $em->getServiceLocator();
+                $serviceLocator     = $em->getServiceLocator();
+                $formElementManager = $serviceLocator->get('FormElementManager');
 
-                $ticketForm = $serviceLocator
-                    ->get('FormElementManager')
-                    ->get(FormTicket::class);
+                $ticketForm  = $formElementManager->get(FormTicket::class);
+                $commentForm = $formElementManager->get(FormComment::class);
 
                 $ticketRepository = $serviceLocator
                     ->get(EntityManager::class)
@@ -187,6 +203,7 @@ return [
                 return new TicketController(
                     $commandBus,
                     $ticketForm,
+                    $commentForm,
                     $ticketRepository
                 );
             },

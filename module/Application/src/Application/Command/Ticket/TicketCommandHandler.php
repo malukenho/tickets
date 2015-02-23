@@ -18,7 +18,9 @@
 
 namespace Application\Command\Ticket;
 
+use Application\Entity\Comment;
 use Application\Entity\Ticket;
+use Application\Event\Ticket\CommentWasAdded;
 use Application\Event\Ticket\TicketWasClosed;
 use Application\Event\Ticket\TicketWasCreated;
 use Application\Event\Ticket\TicketWasRemoved;
@@ -78,6 +80,23 @@ class TicketCommandHandler
         $this->entityManager->flush();
 
         return new TicketWasClosed($command->getTicketIdentifier());
+    }
+
+    public function handleCommentOnTicket(CommentOnTicket $command)
+    {
+        $comment = new Comment();
+        $comment->updateCommentInformationFromPost(
+            $command->getComment(),
+            $command->getTicket()
+        );
+
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+
+        return new CommentWasAdded(
+            $command->getCommentIdentifier(),
+            $command->getTicket()->getTicketIdentifier()
+        );
     }
 
     public function handleSolveTicket(SolveTicket $command)

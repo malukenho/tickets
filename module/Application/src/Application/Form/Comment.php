@@ -18,12 +18,10 @@
 
 namespace Application\Form;
 
-use Application\Filter\Ticket as TicketFormFilter;
-use Application\Enum\Project;
 use Zend\Form\Form;
 use Zend\Http\Request;
 
-class Ticket extends Form
+class Comment extends Form
 {
     public function __construct($name = null, $options = [])
     {
@@ -32,54 +30,16 @@ class Ticket extends Form
         $this->setAttribute('method', Request::METHOD_POST);
 
         $this->add([
-            'name' => 'id',
-            'type' => 'hidden',
-        ]);
-
-        $this->add([
-            'name' => 'subject',
-            'type' => 'text',
-            'options' => [
-                'label' => 'Subject',
-            ],
-            'attributes' => [
-                'placeholder' => 'Subject',
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'description',
+            'name' => 'comment',
             'type' => 'textarea',
             'options' => [
-                'label' => 'Description',
+                'label' => 'Leave your comment',
             ],
             'attributes' => [
-                'placeholder' => 'Description',
+                'placeholder' => 'Write your comment here...',
+                'class'       => 'form-control',
+                'rows'        => '3',
             ],
-        ]);
-
-        $this->add([
-            'name' => 'importance',
-            'type' => 'select',
-            'options' => [
-                'label' => 'Importance',
-                'value_options' => [
-                    1 => Project::LOW_PRIORITY,
-                    2 => Project::MEDIUM_PRIORITY,
-                    3 => Project::HIGH_PRIORITY,
-                    4 => Project::EMERGENCY_PRIORITY,
-                ],
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'opened_by',
-            'type' => 'hidden',
-        ]);
-
-        $this->add([
-            'name' => 'responsible',
-            'type' => 'hidden',
         ]);
 
         $this->add([
@@ -87,7 +47,7 @@ class Ticket extends Form
             'type' => 'submit',
 
             'attributes' => [
-                'value' => 'Open Ticket',
+                'value' => 'Comment',
                 'class' => 'btn btn-success',
             ],
         ]);

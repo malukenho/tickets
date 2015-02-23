@@ -20,12 +20,14 @@ namespace Application\Controller;
 
 use Application\Command\Ticket\CloseTicket;
 use Application\Command\Ticket\CommandBus;
+use Application\Command\Ticket\CommentOnTicket;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketIdentifier;
 use Application\Filter\Ticket as TicketFormFilter;
 use Application\Form\Ticket;
+use Application\Form\Comment;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -39,13 +41,22 @@ class TicketController extends AbstractActionController
      * @var Ticket
      */
     protected $ticketForm;
+    /**
+     * @var Comment
+     */
+    protected $commentForm;
 
     protected $ticketRepository;
 
-    public function __construct(CommandBus $commandHandler, Ticket $ticketForm, $repository)
-    {
+    public function __construct(
+        CommandBus $commandHandler,
+        Ticket $ticketForm,
+        Comment $commentForm,
+        $repository
+    ) {
         $this->commandBus       = $commandHandler;
         $this->ticketForm       = $ticketForm;
+        $this->commentForm      = $commentForm;
         $this->ticketRepository = $repository;
     }
 
@@ -62,7 +73,8 @@ class TicketController extends AbstractActionController
         $result = $this->ticketRepository->findOneById($uuid);
 
         return new ViewModel([
-            'ticketData' => $result
+            'ticketData' => $result,
+            'commentForm' => $this->commentForm,
         ]);
     }
 
@@ -130,6 +142,27 @@ class TicketController extends AbstractActionController
     {
         $id = $this->params('ticketId');
         $result = $this->commandBus->handle(new SolveTicket($id));
+
+        return $this->redirect()->toRoute(
+            'ticket/view',
+            ['ticketId' => $result->getTicketIdentifier()]
+        );
+    }
+
+    public function commentAction()
+    {
+        $id = $this->params('ticketId');
+        $request = $this->getRequest();
+
+        if (! $request->isPost()) {
+            $this->redirect()->toRoute('ticket/view', ['ticketId' => $id]);
+        }
+
+        $id     = $this->params('ticketId');
+        $ticket = $this->ticketRepository->findOneBy(['id' => $id]);
+        $result = $this->commandBus->handle(
+            new CommentOnTicket($ticket, $request->getPost()->get('comment'))
+        );
 
         return $this->redirect()->toRoute(
             'ticket/view',

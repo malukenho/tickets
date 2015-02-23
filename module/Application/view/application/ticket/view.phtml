@@ -41,3 +41,22 @@
     </tr>
     </tbody>
 </table>
+
+<?php // if (! $ticket->getActive()) : ?>
+<div class="container">
+    <div class="row">
+        <strong>Comments:</strong>
+        <?php
+        $form = $this->commentForm;
+        $form->setAttribute('action', $this->url('ticket/comment', [], null, true));
+
+        echo $this->form()->openTag($form);
+        ?>
+
+        <div><?php echo $this->formRow($form->get('comment')); ?></div>
+        <div><?php echo $this->formSubmit($form->get('submit')); ?></div>
+
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
+</div>
+<?php // endif; ?>
