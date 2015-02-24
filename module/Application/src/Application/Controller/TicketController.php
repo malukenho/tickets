@@ -23,6 +23,7 @@ use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\CommentOnTicket;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
+use Application\Command\Ticket\ReopenTicket;
 use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketIdentifier;
 use Application\Filter\Ticket as TicketFormFilter;
@@ -130,6 +131,17 @@ class TicketController extends AbstractActionController
         $this->commandBus->handle(new RemoveTicket($id));
 
         $this->redirect()->toRoute('ticket');
+    }
+
+    public function reopenAction()
+    {
+        $id = $this->params('ticketId');
+        $result = $this->commandBus->handle(new ReopenTicket($id));
+
+        return $this->redirect()->toRoute(
+            'ticket/view',
+            ['ticketId' => $result->getTicketIdentifier()]
+        );
     }
 
     public function closeTicketAction()

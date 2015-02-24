@@ -150,6 +150,11 @@ class Ticket
         $this->active = false;
     }
 
+    public function markAsOpened()
+    {
+        $this->active = true;
+    }
+
     public function markAsSolved()
     {
         $this->solved = true;

@@ -110,4 +110,16 @@ class TicketCommandHandler
 
         return new TicketWasSolved($command->getTicketIdentifier());
     }
+
+    public function handleReopenTicket(ReopenTicket $command)
+    {
+        $entity = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+
+        $entity->markAsOpened();
+        $this->entityManager->flush();
+
+        return new TicketWasClosed($command->getTicketIdentifier());
+    }
 }

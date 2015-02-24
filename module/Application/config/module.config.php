@@ -21,6 +21,7 @@ use Application\Command\Ticket\CommandBus;
 use Application\Command\Ticket\CommentOnTicket;
 use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
+use Application\Command\Ticket\ReopenTicket;
 use Application\Command\Ticket\SolveTicket;
 use Application\Command\Ticket\TicketCommandHandler;
 use Application\Entity\Comment;
@@ -98,6 +99,19 @@ return [
                             ],
                         ],
                     ],
+                    'reopen' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/reopen/:ticketId',
+                            'constraints' => [
+                                'ticketId' => '[a-zA-Z0-9-]{36}',
+                            ],
+                            'defaults' => [
+                                'controller' => TicketController::class,
+                                'action'     => 'reopen',
+                            ],
+                        ],
+                    ],
                     'comment' => [
                         'type'    => Segment::class,
                         'options' => [
@@ -171,6 +185,7 @@ return [
                     CloseTicket::class   => 'handleCloseTicket',
                     SolveTicket::class   => 'handleSolveTicket',
                     CommentOnTicket::class   => 'handleCommentOnTicket',
+                    ReopenTicket::class   => 'handleReopenTicket',
                 ];
 
                 $entityManager = $em->get(EntityManager::class);

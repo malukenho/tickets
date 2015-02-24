@@ -36,6 +36,8 @@
 
             <?php if ($ticket->getActive()) : ?>
                 <a href="<?php echo $this->url('ticket/close', [], null, true); ?>" class="btn btn-danger">Close Ticket</a>
+            <?php else: ?>
+                <a href="<?php echo $this->url('ticket/reopen', [], null, true); ?>" class="btn btn-success">Reopen Ticket</a>
             <?php endif; ?>
         </td>
     </tr>
