@@ -18,7 +18,6 @@
 
 namespace Application\Event\Ticket;
 
-
 class TicketWasReopened
 {
     /**
