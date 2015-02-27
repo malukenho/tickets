@@ -43,7 +43,7 @@ class CommentOnTicket extends AbstractCommandHandler
         );
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof CommentOnTicketCommand;
     }

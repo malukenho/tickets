@@ -38,7 +38,7 @@ class SolveTicket extends AbstractCommandHandler
         return new TicketWasSolved($command->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof SolveTicketCommand;
     }

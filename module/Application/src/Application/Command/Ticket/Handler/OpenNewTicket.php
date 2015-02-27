@@ -44,7 +44,7 @@ class OpenNewTicket extends AbstractCommandHandler
         return new TicketWasCreated($ticket->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof OpenNewTicketCommand;
     }

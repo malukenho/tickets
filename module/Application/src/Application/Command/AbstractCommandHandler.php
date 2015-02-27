@@ -34,5 +34,5 @@ abstract class AbstractCommandHandler
 
     abstract public function handle(Command $command);
 
-    abstract public function canHandler(Command $command);
+    abstract public function canHandle(Command $command);
 }

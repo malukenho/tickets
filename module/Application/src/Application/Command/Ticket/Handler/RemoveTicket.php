@@ -38,7 +38,7 @@ class RemoveTicket extends AbstractCommandHandler
         return new TicketWasRemoved($command->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof RemoveTicketCommand;
     }

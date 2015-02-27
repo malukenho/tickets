@@ -38,7 +38,7 @@ class CloseTicket extends AbstractCommandHandler
         return new TicketWasClosed($command->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof CloseTicketCommand;
     }
