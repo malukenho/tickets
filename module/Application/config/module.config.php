@@ -16,14 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-use Application\Command\Ticket\CloseTicket;
 use Application\Command\Ticket\CommandBus;
-use Application\Command\Ticket\CommentOnTicket;
-use Application\Command\Ticket\OpenNewTicket;
-use Application\Command\Ticket\RemoveTicket;
-use Application\Command\Ticket\ReopenTicket;
-use Application\Command\Ticket\SolveTicket;
-use Application\Command\Ticket\TicketCommandHandler;
 use Application\Entity\Comment;
 use Application\Form\Comment as FormComment;
 use Application\Form\Ticket as FormTicket;
@@ -34,6 +27,7 @@ use Application\Controller\TicketController;
 use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Application\Entity\Ticket as TicketEntity;
+use Application\Command\Ticket\Handler;
 
 return [
     'router' => [
@@ -179,19 +173,18 @@ return [
     'service_manager' => [
         'factories' => [
             CommandBus::class => function ($em) {
+                $entityManager = $em->get(EntityManager::class);
+
                 $commandTicketCollection = [
-                    OpenNewTicket::class => 'handleOpenNewTicket',
-                    RemoveTicket::class  => 'handleRemoveTicket',
-                    CloseTicket::class   => 'handleCloseTicket',
-                    SolveTicket::class   => 'handleSolveTicket',
-                    CommentOnTicket::class   => 'handleCommentOnTicket',
-                    ReopenTicket::class   => 'handleReopenTicket',
+                    new Handler\OpenNewTicket($entityManager),
+                    new Handler\RemoveTicket($entityManager),
+                    new Handler\CommentOnTicket($entityManager),
+                    new Handler\CloseTicket($entityManager),
+                    new Handler\ReopenTicket($entityManager),
+                    new Handler\SolveTicket($entityManager),
                 ];
 
-                $entityManager = $em->get(EntityManager::class);
-                $ticketCommandHandler = new TicketCommandHandler($entityManager);
-
-                return new CommandBus($commandTicketCollection, $ticketCommandHandler);
+                return new CommandBus($commandTicketCollection);
             },
         ],
     ],

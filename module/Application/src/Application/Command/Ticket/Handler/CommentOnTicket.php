@@ -16,30 +16,35 @@
  * and is licensed under the MIT license.
  */
 
-namespace Application\Command\Ticket;
+namespace Application\Command\Ticket\Handler;
 
+use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\Ticket\CommentOnTicket as CommentOnTicketCommand;
+use Application\Entity\Comment;
+use Application\Event\Ticket\CommentWasAdded;
 
-class RemoveTicket implements Command
+class CommentOnTicket extends AbstractCommandHandler
 {
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @param string $identifier
-     */
-    public function __construct($identifier)
+    public function handler(Command $command)
     {
-        $this->identifier = $identifier;
+        $comment = new Comment();
+        $comment->updateCommentInformationFromPost(
+            $command->getComment(),
+            $command->getTicket()
+        );
+
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+
+        return new CommentWasAdded(
+            $command->getCommentIdentifier(),
+            $command->getTicket()->getTicketIdentifier()
+        );
     }
 
-    /**
-     * @return string
-     */
-    public function getTicketIdentifier()
+    public function canHandler(Command $command)
     {
-        return $this->identifier;
+        return $command instanceof CommentOnTicketCommand;
     }
 }

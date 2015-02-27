@@ -16,30 +16,23 @@
  * and is licensed under the MIT license.
  */
 
-namespace Application\Command\Ticket;
+namespace Application\Command;
 
-use Application\Command\Command;
+use Doctrine\ORM\EntityManager;
 
-class RemoveTicket implements Command
+abstract class AbstractCommandHandler
 {
     /**
-     * @var string
+     * @var EntityManager
      */
-    private $identifier;
+    protected $entityManager;
 
-    /**
-     * @param string $identifier
-     */
-    public function __construct($identifier)
+    public function __construct(EntityManager $entityManager)
     {
-        $this->identifier = $identifier;
+        $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return string
-     */
-    public function getTicketIdentifier()
-    {
-        return $this->identifier;
-    }
+    abstract public function handler(Command $command);
+
+    abstract public function canHandler(Command $command);
 }

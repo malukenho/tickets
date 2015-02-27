@@ -18,25 +18,21 @@
 
 namespace Application\Command\Ticket;
 
+use Application\Command\AbstractCommandHandler;
+
 class CommandBus
 {
     /**
      * @var array
      */
     private $handlers;
-    /**
-     * @var TicketCommandHandler
-     */
-    private $commandHandler;
 
     /**
-     * @param array                $handlers
-     * @param TicketCommandHandler $commandHandler
+     * @param array $handlers
      */
-    public function __construct(array $handlers, TicketCommandHandler $commandHandler)
+    public function __construct(array $handlers)
     {
-        $this->handlers       = $handlers;
-        $this->commandHandler = $commandHandler;
+        $this->handlers = $handlers;
     }
 
     /**
@@ -44,14 +40,13 @@ class CommandBus
      *
      * @return object
      */
-    public function handle($command)
+    public function push($command)
     {
-        $commandName = get_class($command);
-
-        if (isset($this->handlers[$commandName])) {
-            $handler = $this->handlers[$commandName];
-
-            return $this->commandHandler->$handler($command);
+        foreach ($this->handlers as $handler) {
+            /** @var AbstractCommandHandler $handler */
+            if ($handler->canHandler($command)) {
+                return $handler->handler($command);
+            }
         }
     }
 }

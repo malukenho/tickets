@@ -16,30 +16,30 @@
  * and is licensed under the MIT license.
  */
 
-namespace Application\Command\Ticket;
+namespace Application\Command\Ticket\Handler;
 
+use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\Ticket\RemoveTicket as RemoveTicketCommand;
+use Application\Entity\Ticket;
+use Application\Event\Ticket\TicketWasRemoved;
 
-class RemoveTicket implements Command
+class RemoveTicket extends AbstractCommandHandler
 {
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @param string $identifier
-     */
-    public function __construct($identifier)
+    public function handler(Command $command)
     {
-        $this->identifier = $identifier;
+        $entity = $this->entityManager
+            ->getRepository(Ticket::class)
+            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
+
+        return new TicketWasRemoved($command->getTicketIdentifier());
     }
 
-    /**
-     * @return string
-     */
-    public function getTicketIdentifier()
+    public function canHandler(Command $command)
     {
-        return $this->identifier;
+        return $command instanceof RemoveTicketCommand;
     }
 }

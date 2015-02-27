@@ -18,9 +18,10 @@
 
 namespace Application\Command\Ticket;
 
+use Application\Command\Command;
 use Rhumsaa\Uuid\Uuid;
 
-class OpenNewTicket
+class OpenNewTicket implements Command
 {
     /**
      * @var string

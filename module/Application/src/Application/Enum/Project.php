@@ -19,10 +19,10 @@ namespace Application\Enum;
 
 final class Project
 {
-    const LOW_PRIORITY       = 0;
-    const MEDIUM_PRIORITY    = 1;
-    const HIGH_PRIORITY      = 2;
-    const EMERGENCY_PRIORITY = 3;
+    const LOW_PRIORITY       = 'Low';
+    const MEDIUM_PRIORITY    = 'Medium';
+    const HIGH_PRIORITY      = 'High';
+    const EMERGENCY_PRIORITY = 'Emergency';
 
     private function __construct()
     {

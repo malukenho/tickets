@@ -18,7 +18,9 @@
 
 namespace Application\Command\Ticket;
 
-class CloseTicket
+use Application\Command\Command;
+
+class CloseTicket implements Command
 {
     /**
      * @var string

@@ -16,30 +16,9 @@
  * and is licensed under the MIT license.
  */
 
-namespace Application\Command\Ticket;
+namespace Application\Command;
 
-use Application\Command\Command;
-
-class RemoveTicket implements Command
+interface Command
 {
-    /**
-     * @var string
-     */
-    private $identifier;
 
-    /**
-     * @param string $identifier
-     */
-    public function __construct($identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTicketIdentifier()
-    {
-        return $this->identifier;
-    }
 }

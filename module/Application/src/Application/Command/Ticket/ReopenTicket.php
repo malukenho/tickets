@@ -18,7 +18,9 @@
 
 namespace Application\Command\Ticket;
 
-class ReopenTicket
+use Application\Command\Command;
+
+class ReopenTicket implements Command
 {
     /**
      * @var string

@@ -25,7 +25,6 @@ use Application\Command\Ticket\OpenNewTicket;
 use Application\Command\Ticket\RemoveTicket;
 use Application\Command\Ticket\ReopenTicket;
 use Application\Command\Ticket\SolveTicket;
-use Application\Command\Ticket\TicketIdentifier;
 use Application\Filter\Ticket as TicketFormFilter;
 use Application\Form\Ticket;
 use Application\Form\Comment;
@@ -128,7 +127,7 @@ class TicketController extends AbstractActionController
     public function removeTicketAction()
     {
         $id = $this->params('ticketId');
-        $this->commandBus->handle(new RemoveTicket($id));
+        $this->commandBus->push(new RemoveTicket($id));
 
         $this->redirect()->toRoute('ticket');
     }
@@ -136,7 +135,7 @@ class TicketController extends AbstractActionController
     public function reopenAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->handle(new ReopenTicket($id));
+        $result = $this->commandBus->push(new ReopenTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
@@ -147,7 +146,7 @@ class TicketController extends AbstractActionController
     public function closeTicketAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->handle(new CloseTicket($id));
+        $result = $this->commandBus->push(new CloseTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
@@ -158,7 +157,7 @@ class TicketController extends AbstractActionController
     public function solveTicketAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->handle(new SolveTicket($id));
+        $result = $this->commandBus->push(new SolveTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
@@ -177,7 +176,7 @@ class TicketController extends AbstractActionController
 
         $id     = $this->params('ticketId');
         $ticket = $this->ticketRepository->findOneBy(['id' => $id]);
-        $result = $this->commandBus->handle(
+        $result = $this->commandBus->push(
             new CommentOnTicket($ticket, $request->getPost()->get('comment'))
         );
 
@@ -189,7 +188,7 @@ class TicketController extends AbstractActionController
 
     protected function registerNewTicket(array $validData)
     {
-        $result = $this->commandBus->handle(
+        $result = $this->commandBus->push(
             new OpenNewTicket(
                 $validData['subject'],
                 $validData['description'],

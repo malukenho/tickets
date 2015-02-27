@@ -18,7 +18,9 @@
 
 namespace Application\Command\Ticket;
 
-class SolveTicket
+use Application\Command\Command;
+
+class SolveTicket implements Command
 {
     /**
      * @var string

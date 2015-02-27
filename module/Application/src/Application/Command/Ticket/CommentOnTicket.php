@@ -18,10 +18,11 @@
 
 namespace Application\Command\Ticket;
 
+use Application\Command\Command;
 use Rhumsaa\Uuid\Uuid;
 use Application\Entity\Ticket;
 
-class CommentOnTicket
+class CommentOnTicket implements Command
 {
     private $uuid;
     private $ticket;
