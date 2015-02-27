@@ -18,14 +18,25 @@
 
 namespace Application\Command\Ticket\Handler;
 
-use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\CommentOnTicket as CommentOnTicketCommand;
 use Application\Entity\Comment;
 use Application\Event\Ticket\CommentWasAdded;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class CommentOnTicket extends AbstractCommandHandler
+class CommentOnTicket implements CommandHandlerInterface
 {
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    public function __construct(ObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
     public function handle(Command $command)
     {
         $comment = new Comment();
@@ -34,8 +45,8 @@ class CommentOnTicket extends AbstractCommandHandler
             $command->getTicket()
         );
 
-        $this->entityManager->persist($comment);
-        $this->entityManager->flush();
+        $this->objectManager->persist($comment);
+        $this->objectManager->flush();
 
         return new CommentWasAdded(
             $command->getCommentIdentifier(),

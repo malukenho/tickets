@@ -18,22 +18,34 @@
 
 namespace Application\Command\Ticket\Handler;
 
-use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\ReopenTicket as ReopenTicketCommand;
 use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasClosed;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class ReopenTicket extends AbstractCommandHandler
+class ReopenTicket implements CommandHandlerInterface
 {
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    public function __construct(ObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
     public function handle(Command $command)
     {
-        $entity = $this->entityManager
+        $entity = $this
+            ->objectManager
             ->getRepository(Ticket::class)
             ->findOneBy(['id' => $command->getTicketIdentifier()]);
 
         $entity->markAsOpened();
-        $this->entityManager->flush();
+        $this->objectManager->flush();
 
         return new TicketWasClosed($command->getTicketIdentifier());
     }
