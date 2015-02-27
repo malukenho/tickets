@@ -19,8 +19,8 @@
 namespace Application\Command\Ticket;
 
 use Application\Command\Command;
-use Rhumsaa\Uuid\Uuid;
 use Application\Entity\Ticket;
+use Rhumsaa\Uuid\Uuid;
 
 class CommentOnTicket implements Command
 {
