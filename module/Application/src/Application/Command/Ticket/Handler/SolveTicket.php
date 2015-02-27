@@ -26,7 +26,7 @@ use Application\Event\Ticket\TicketWasSolved;
 
 class SolveTicket extends AbstractCommandHandler
 {
-    public function handler(Command $command)
+    public function handle(Command $command)
     {
         $entity = $this->entityManager
             ->getRepository(Ticket::class)

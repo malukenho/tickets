@@ -26,7 +26,7 @@ use Application\Event\Ticket\TicketWasCreated;
 
 class OpenNewTicket extends AbstractCommandHandler
 {
-    public function handler(Command $command)
+    public function handle(Command $command)
     {
         $ticket = new Ticket();
 

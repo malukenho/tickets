@@ -45,7 +45,7 @@ class CommandBus
         foreach ($this->handlers as $handler) {
             /** @var AbstractCommandHandler $handler */
             if ($handler->canHandler($command)) {
-                return $handler->handler($command);
+                return $handler->handle($command);
             }
         }
     }

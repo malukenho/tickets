@@ -32,7 +32,7 @@ abstract class AbstractCommandHandler
         $this->entityManager = $entityManager;
     }
 
-    abstract public function handler(Command $command);
+    abstract public function handle(Command $command);
 
     abstract public function canHandler(Command $command);
 }

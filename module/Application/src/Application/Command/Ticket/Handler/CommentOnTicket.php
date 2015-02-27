@@ -26,7 +26,7 @@ use Application\Event\Ticket\CommentWasAdded;
 
 class CommentOnTicket extends AbstractCommandHandler
 {
-    public function handler(Command $command)
+    public function handle(Command $command)
     {
         $comment = new Comment();
         $comment->updateCommentInformationFromPost(
