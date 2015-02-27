@@ -25,7 +25,7 @@ use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasClosed;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ReopenTicket implements CommandHandlerInterface
+final class ReopenTicket implements CommandHandlerInterface
 {
     /**
      * @var ObjectManager

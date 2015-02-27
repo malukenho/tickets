@@ -25,7 +25,7 @@ use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasSolved;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class SolveTicket implements CommandHandlerInterface
+final class SolveTicket implements CommandHandlerInterface
 {
     /**
      * @var ObjectManager

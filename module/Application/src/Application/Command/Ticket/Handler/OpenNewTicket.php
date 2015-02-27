@@ -25,7 +25,7 @@ use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasCreated;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class OpenNewTicket implements CommandHandlerInterface
+final class OpenNewTicket implements CommandHandlerInterface
 {
     /**
      * @var ObjectManager

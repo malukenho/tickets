@@ -25,7 +25,7 @@ use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasRemoved;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class RemoveTicket implements CommandHandlerInterface
+final class RemoveTicket implements CommandHandlerInterface
 {
     /**
      * @var ObjectManager

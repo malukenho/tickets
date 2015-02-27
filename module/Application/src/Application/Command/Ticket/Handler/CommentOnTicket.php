@@ -25,7 +25,7 @@ use Application\Entity\Comment;
 use Application\Event\Ticket\CommentWasAdded;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class CommentOnTicket implements CommandHandlerInterface
+final class CommentOnTicket implements CommandHandlerInterface
 {
     /**
      * @var ObjectManager
