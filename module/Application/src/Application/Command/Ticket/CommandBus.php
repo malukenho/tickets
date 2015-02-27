@@ -23,7 +23,7 @@ use Application\Command\CommandHandlerInterface;
 class CommandBus
 {
     /**
-     * @var array
+     * @var CommandHandlerInterface[]
      */
     private $handlers;
 
@@ -43,7 +43,6 @@ class CommandBus
     public function push($command)
     {
         foreach ($this->handlers as $handler) {
-            /** @var CommandHandlerInterface $handler */
             if ($handler->canHandle($command)) {
                 $handler->handle($command);
 
