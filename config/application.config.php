@@ -1,5 +1,7 @@
 <?php
 
+use Application\Listener\Authentication;
+
 return [
     'modules' => [
         'DoctrineModule',
@@ -8,6 +10,10 @@ return [
         'ZfcUser',
         'ZfcUserDoctrineORM',
         'Application',
+    ],
+
+    'listeners' => [
+        Authentication::class,
     ],
 
     'module_listener_options' => [

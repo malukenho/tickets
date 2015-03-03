@@ -18,12 +18,34 @@
 
 namespace Application;
 
+use Application\Listener\Authentication;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Controller\AbstractActionController;
 
 final class Module implements ConfigProviderInterface
 {
     public function getConfig()
     {
         return include __DIR__ . '/../../config/module.config.php';
+    }
+
+    public function onBootstrap(MvcEvent $e)
+    {
+        $eventManager  = $e->getApplication()->getEventManager();
+        $sharedManager = $eventManager->getSharedManager();
+        $sm            = $e->getApplication()->getServiceManager();
+
+        $sharedManager->attach(
+            AbstractActionController::class,
+            MvcEvent::EVENT_ROUTE,
+            function($e) use ($sm) {
+                $controller = $e->getTarget();
+                $controller->getEventManager()->attachAggregate(
+                    $sm->get(Authentication::class)
+                );
+            },
+            2
+        );
     }
 }

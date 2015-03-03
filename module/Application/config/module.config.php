@@ -28,6 +28,7 @@ use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Application\Entity\Ticket as TicketEntity;
 use Application\Command\Ticket\Handler;
+use Application\Listener\Authentication;
 
 return [
     'router' => [
@@ -186,6 +187,10 @@ return [
 
                 return new CommandBus($commandTicketCollection);
             },
+        ],
+
+        'invokables' => [
+            Authentication::class => Authentication::class,
         ],
     ],
 
