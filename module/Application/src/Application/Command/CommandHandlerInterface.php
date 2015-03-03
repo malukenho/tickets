@@ -18,21 +18,19 @@
 
 namespace Application\Command;
 
-use Doctrine\ORM\EntityManager;
-
-abstract class AbstractCommandHandler
+interface CommandHandlerInterface
 {
     /**
-     * @var EntityManager
+     * @param Command $command
+     *
+     * @return void
      */
-    protected $entityManager;
+    public function handle(Command $command);
 
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    abstract public function handler(Command $command);
-
-    abstract public function canHandler(Command $command);
+    /**
+     * @param Command $command
+     *
+     * @return bool
+     */
+    public function canHandle(Command $command);
 }

@@ -18,15 +18,26 @@
 
 namespace Application\Command\Ticket\Handler;
 
-use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\OpenNewTicket as OpenNewTicketCommand;
 use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasCreated;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class OpenNewTicket extends AbstractCommandHandler
+final class OpenNewTicket implements CommandHandlerInterface
 {
-    public function handler(Command $command)
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    public function __construct(ObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    public function handle(Command $command)
     {
         $ticket = new Ticket();
 
@@ -38,13 +49,13 @@ class OpenNewTicket extends AbstractCommandHandler
             2
         );
 
-        $this->entityManager->persist($ticket);
-        $this->entityManager->flush();
+        $this->objectManager->persist($ticket);
+        $this->objectManager->flush();
 
         return new TicketWasCreated($ticket->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof OpenNewTicketCommand;
     }

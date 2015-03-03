@@ -18,34 +18,42 @@
 
 namespace Application\Command\Ticket;
 
-use Application\Command\AbstractCommandHandler;
+use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 
 class CommandBus
 {
     /**
-     * @var array
+     * @var CommandHandlerInterface[]
      */
     private $handlers;
 
     /**
-     * @param array $handlers
+     * @param CommandHandlerInterface[] $handlers
      */
     public function __construct(array $handlers)
     {
-        $this->handlers = $handlers;
+        // callback used just for type-safety
+        $this->handlers = array_map(
+            function (CommandHandlerInterface $handler) {
+                return $handler;
+            },
+            $handlers
+        );
     }
 
     /**
-     * @param  object $command
+     * @param Command $command
      *
-     * @return object
+     * @return void
      */
-    public function push($command)
+    public function push(Command $command)
     {
         foreach ($this->handlers as $handler) {
-            /** @var AbstractCommandHandler $handler */
-            if ($handler->canHandler($command)) {
-                return $handler->handler($command);
+            if ($handler->canHandle($command)) {
+                $handler->handle($command);
+
+                break;
             }
         }
     }

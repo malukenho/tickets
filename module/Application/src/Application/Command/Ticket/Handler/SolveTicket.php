@@ -18,27 +18,39 @@
 
 namespace Application\Command\Ticket\Handler;
 
-use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\SolveTicket as SolveTicketCommand;
 use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasSolved;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class SolveTicket extends AbstractCommandHandler
+final class SolveTicket implements CommandHandlerInterface
 {
-    public function handler(Command $command)
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    public function __construct(ObjectManager $objectManager)
     {
-        $entity = $this->entityManager
+        $this->objectManager = $objectManager;
+    }
+
+    public function handle(Command $command)
+    {
+        $entity = $this
+            ->objectManager
             ->getRepository(Ticket::class)
             ->findOneBy(['id' => $command->getTicketIdentifier()]);
 
         $entity->markAsSolved();
-        $this->entityManager->flush();
+        $this->objectManager->flush();
 
         return new TicketWasSolved($command->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof SolveTicketCommand;
     }

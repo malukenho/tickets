@@ -18,27 +18,39 @@
 
 namespace Application\Command\Ticket\Handler;
 
-use Application\Command\AbstractCommandHandler;
 use Application\Command\Command;
+use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\RemoveTicket as RemoveTicketCommand;
 use Application\Entity\Ticket;
 use Application\Event\Ticket\TicketWasRemoved;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class RemoveTicket extends AbstractCommandHandler
+final class RemoveTicket implements CommandHandlerInterface
 {
-    public function handler(Command $command)
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    public function __construct(ObjectManager $objectManager)
     {
-        $entity = $this->entityManager
+        $this->objectManager = $objectManager;
+    }
+
+    public function handle(Command $command)
+    {
+        $entity = $this
+            ->objectManager
             ->getRepository(Ticket::class)
             ->findOneBy(['id' => $command->getTicketIdentifier()]);
 
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        $this->objectManager->remove($entity);
+        $this->objectManager->flush();
 
         return new TicketWasRemoved($command->getTicketIdentifier());
     }
 
-    public function canHandler(Command $command)
+    public function canHandle(Command $command)
     {
         return $command instanceof RemoveTicketCommand;
     }
