@@ -20,6 +20,7 @@ use Application\Command\Ticket\CommandBus;
 use Application\Entity\Comment;
 use Application\Form\Comment as FormComment;
 use Application\Form\Ticket as FormTicket;
+use Application\Service\TicketCommandBus;
 use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\IndexController;
@@ -173,20 +174,7 @@ return [
 
     'service_manager' => [
         'factories' => [
-            CommandBus::class => function ($em) {
-                $entityManager = $em->get(EntityManager::class);
-
-                $commandTicketCollection = [
-                    new Handler\OpenNewTicket($entityManager),
-                    new Handler\RemoveTicket($entityManager),
-                    new Handler\CommentOnTicket($entityManager),
-                    new Handler\CloseTicket($entityManager),
-                    new Handler\ReopenTicket($entityManager),
-                    new Handler\SolveTicket($entityManager),
-                ];
-
-                return new CommandBus($commandTicketCollection);
-            },
+            CommandBus::class => TicketCommandBus::class,
         ],
 
         'invokables' => [
