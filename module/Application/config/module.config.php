@@ -17,19 +17,15 @@
  */
 
 use Application\Command\Ticket\CommandBus;
-use Application\Entity\Comment;
-use Application\Form\Comment as FormComment;
-use Application\Form\Ticket as FormTicket;
 use Application\Factory\TicketCommandBus;
-use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\IndexController;
 use Application\Controller\TicketController;
 use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Application\Entity\Ticket as TicketEntity;
 use Application\Command\Ticket\Handler;
 use Application\Listener\Authentication;
+use Application\Factory\TicketController as FactoryTicketController;
 
 return [
     'router' => [
@@ -188,29 +184,7 @@ return [
         ],
 
         'factories' => [
-            TicketController::class => function ($em) {
-
-                $serviceLocator     = $em->getServiceLocator();
-                $formElementManager = $serviceLocator->get('FormElementManager');
-
-                $ticketForm  = $formElementManager->get(FormTicket::class);
-                $commentForm = $formElementManager->get(FormComment::class);
-
-                $entityManager = $serviceLocator->get(EntityManager::class);
-
-                $ticketRepository  = $entityManager->getRepository(TicketEntity::class);
-                $commentRepository = $entityManager->getRepository(Comment::class);
-
-                $commandBus = $serviceLocator->get(CommandBus::class);
-
-                return new TicketController(
-                    $commandBus,
-                    $ticketForm,
-                    $commentForm,
-                    $ticketRepository,
-                    $commentRepository
-                );
-            },
+            TicketController::class => FactoryTicketController::class,
         ],
     ],
 
