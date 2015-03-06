@@ -20,7 +20,7 @@ use Application\Command\Ticket\CommandBus;
 use Application\Entity\Comment;
 use Application\Form\Comment as FormComment;
 use Application\Form\Ticket as FormTicket;
-use Application\Service\TicketCommandBus;
+use Application\Factory\TicketCommandBus;
 use Doctrine\ORM\EntityManager;
 use Zend\Mvc\Router\Http\Literal;
 use Application\Controller\IndexController;

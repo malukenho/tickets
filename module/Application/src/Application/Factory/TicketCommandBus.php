@@ -15,7 +15,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
-namespace Application\Service;
+namespace Application\Factory;
 
 use Application\Command\Ticket\CommandBus;
 use Doctrine\ORM\EntityManager;
