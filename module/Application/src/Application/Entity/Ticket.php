@@ -132,12 +132,14 @@ class Ticket
     }
 
     public function updateTicketInformationFromOpenCommand(
+        $id,
         $subject,
         $description,
         $importance,
         $openedBy,
         $active
     ) {
+        $this->id = $id;
         $this->subject = $subject;
         $this->description = $description;
         $this->openedBy = $openedBy;
