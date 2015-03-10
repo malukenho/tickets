@@ -80,7 +80,7 @@ class Comment
     }
 
     /**
-     * @param Ticket $comment
+     * @return Ticket $comment
      */
     public function getTicket()
     {
