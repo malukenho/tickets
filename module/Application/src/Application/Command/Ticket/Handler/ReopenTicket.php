@@ -38,12 +38,12 @@ final class ReopenTicket implements CommandHandlerInterface
 
     public function handle(Command $command)
     {
-        $entity = $this
+        $ticket = $this
             ->objectManager
             ->getRepository(Ticket::class)
-            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+            ->find($command->getTicketIdentifier());
 
-        $entity->markAsOpened();
+        $ticket->reopen();
         $this->objectManager->flush();
     }
 

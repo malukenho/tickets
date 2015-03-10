@@ -38,12 +38,12 @@ final class RemoveTicket implements CommandHandlerInterface
 
     public function handle(Command $command)
     {
-        $entity = $this
+        $ticket = $this
             ->objectManager
             ->getRepository(Ticket::class)
-            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+            ->find($command->getTicketIdentifier());
 
-        $this->objectManager->remove($entity);
+        $this->objectManager->remove($ticket);
         $this->objectManager->flush();
     }
 

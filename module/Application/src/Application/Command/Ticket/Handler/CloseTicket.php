@@ -38,12 +38,12 @@ final class CloseTicket implements CommandHandlerInterface
 
     public function handle(Command $command)
     {
-        $entity = $this
+        $ticket = $this
             ->objectManager
             ->getRepository(Ticket::class)
-            ->findOneBy(['id' => $command->getTicketIdentifier()]);
+            ->find($command->getTicketIdentifier());
 
-        $entity->markAsClosed();
+        $ticket->close();
         $this->objectManager->flush();
     }
 

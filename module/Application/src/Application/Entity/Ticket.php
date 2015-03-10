@@ -147,17 +147,17 @@ class Ticket
         $this->importance = $importance;
     }
 
-    public function markAsClosed()
+    public function close()
     {
         $this->active = false;
     }
 
-    public function markAsOpened()
+    public function reopen()
     {
         $this->active = true;
     }
 
-    public function markAsSolved()
+    public function solve()
     {
         $this->solved = true;
     }
