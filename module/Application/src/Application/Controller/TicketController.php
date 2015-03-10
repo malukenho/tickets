@@ -110,7 +110,7 @@ class TicketController extends AbstractActionController
         $form     = $this->ticketForm;
         $ticketId = $this->params('ticketId');
 
-        $ticketInformation = $this->ticketRepository->findOneById($ticketId);
+        $ticketInformation = $this->ticketRepository->find($ticketId);
 
         $form->setData([
             'subject'     => $ticketInformation->getSubject(),
