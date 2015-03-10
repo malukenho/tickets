@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\RemoveTicket as RemoveTicketCommand;
 use Application\Entity\Ticket;
-use Application\Event\Ticket\TicketWasRemoved;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class RemoveTicket implements CommandHandlerInterface
@@ -46,8 +45,6 @@ final class RemoveTicket implements CommandHandlerInterface
 
         $this->objectManager->remove($entity);
         $this->objectManager->flush();
-
-        return new TicketWasRemoved($command->getTicketIdentifier());
     }
 
     public function canHandle(Command $command)

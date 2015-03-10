@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\CloseTicket as CloseTicketCommand;
 use Application\Entity\Ticket;
-use Application\Event\Ticket\TicketWasClosed;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class CloseTicket implements CommandHandlerInterface
@@ -46,8 +45,6 @@ final class CloseTicket implements CommandHandlerInterface
 
         $entity->markAsClosed();
         $this->objectManager->flush();
-
-        return new TicketWasClosed($command->getTicketIdentifier());
     }
 
     public function canHandle(Command $command)

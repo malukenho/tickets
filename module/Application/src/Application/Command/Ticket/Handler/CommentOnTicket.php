@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\CommentOnTicket as CommentOnTicketCommand;
 use Application\Entity\Comment;
-use Application\Event\Ticket\CommentWasAdded;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class CommentOnTicket implements CommandHandlerInterface
@@ -47,11 +46,6 @@ final class CommentOnTicket implements CommandHandlerInterface
 
         $this->objectManager->persist($comment);
         $this->objectManager->flush();
-
-        return new CommentWasAdded(
-            $command->getCommentIdentifier(),
-            $command->getTicket()->getTicketIdentifier()
-        );
     }
 
     public function canHandle(Command $command)

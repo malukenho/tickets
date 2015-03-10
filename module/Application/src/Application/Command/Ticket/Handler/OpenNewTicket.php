@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\OpenNewTicket as OpenNewTicketCommand;
 use Application\Entity\Ticket;
-use Application\Event\Ticket\TicketWasCreated;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class OpenNewTicket implements CommandHandlerInterface
@@ -42,6 +41,7 @@ final class OpenNewTicket implements CommandHandlerInterface
         $ticket = new Ticket();
 
         $ticket->updateTicketInformationFromOpenCommand(
+            $command->getUuid(),
             $command->getSubject(),
             $command->getDescription(),
             $command->getImportance(),
@@ -51,8 +51,6 @@ final class OpenNewTicket implements CommandHandlerInterface
 
         $this->objectManager->persist($ticket);
         $this->objectManager->flush();
-
-        return new TicketWasCreated($ticket->getTicketIdentifier());
     }
 
     public function canHandle(Command $command)

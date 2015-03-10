@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\SolveTicket as SolveTicketCommand;
 use Application\Entity\Ticket;
-use Application\Event\Ticket\TicketWasSolved;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class SolveTicket implements CommandHandlerInterface
@@ -46,8 +45,6 @@ final class SolveTicket implements CommandHandlerInterface
 
         $entity->markAsSolved();
         $this->objectManager->flush();
-
-        return new TicketWasSolved($command->getTicketIdentifier());
     }
 
     public function canHandle(Command $command)

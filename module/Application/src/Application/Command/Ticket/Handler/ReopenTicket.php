@@ -22,7 +22,6 @@ use Application\Command\Command;
 use Application\Command\CommandHandlerInterface;
 use Application\Command\Ticket\ReopenTicket as ReopenTicketCommand;
 use Application\Entity\Ticket;
-use Application\Event\Ticket\TicketWasClosed;
 use Doctrine\Common\Persistence\ObjectManager;
 
 final class ReopenTicket implements CommandHandlerInterface
@@ -46,8 +45,6 @@ final class ReopenTicket implements CommandHandlerInterface
 
         $entity->markAsOpened();
         $this->objectManager->flush();
-
-        return new TicketWasClosed($command->getTicketIdentifier());
     }
 
     public function canHandle(Command $command)
