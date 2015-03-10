@@ -28,6 +28,7 @@ use Application\Command\Ticket\SolveTicket;
 use Application\Filter\Ticket as TicketFormFilter;
 use Application\Form\Ticket;
 use Application\Form\Comment;
+use Doctrine\ORM\EntityRepository;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -53,8 +54,8 @@ class TicketController extends AbstractActionController
         CommandBus $commandHandler,
         Ticket $ticketForm,
         Comment $commentForm,
-        $ticketRepository,
-        $commentRepository
+        EntityRepository $ticketRepository,
+        EntityRepository $commentRepository
     ) {
         $this->commandBus        = $commandHandler;
         $this->ticketForm        = $ticketForm;
@@ -73,7 +74,7 @@ class TicketController extends AbstractActionController
     public function viewAction()
     {
         $uuid     = $this->params()->fromRoute('ticketId');
-        $result   = $this->ticketRepository->findOneById($uuid);
+        $result = $this->ticketRepository->find($uuid);
         $comments = $this->commentRepository->findBy(['ticket' => $uuid]);
 
         return new ViewModel([
@@ -135,33 +136,33 @@ class TicketController extends AbstractActionController
     public function reopenAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->push(new ReopenTicket($id));
+        $this->commandBus->push(new ReopenTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
-            ['ticketId' => $result->getTicketIdentifier()]
+            ['ticketId' => $id]
         );
     }
 
     public function closeTicketAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->push(new CloseTicket($id));
+        $this->commandBus->push(new CloseTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
-            ['ticketId' => $result->getTicketIdentifier()]
+            ['ticketId' => $id]
         );
     }
 
     public function solveTicketAction()
     {
         $id = $this->params('ticketId');
-        $result = $this->commandBus->push(new SolveTicket($id));
+        $this->commandBus->push(new SolveTicket($id));
 
         return $this->redirect()->toRoute(
             'ticket/view',
-            ['ticketId' => $result->getTicketIdentifier()]
+            ['ticketId' => $id]
         );
     }
 
@@ -175,34 +176,32 @@ class TicketController extends AbstractActionController
         }
 
         $id     = $this->params('ticketId');
-        $ticket = $this->ticketRepository->findOneBy(['id' => $id]);
-        $result = $this->commandBus->push(
+        $ticket = $this->ticketRepository->find($id);
+        $this->commandBus->push(
             new CommentOnTicket($ticket, $request->getPost()->get('comment'))
         );
 
         return $this->redirect()->toRoute(
             'ticket/view',
-            ['ticketId' => $result->getTicketIdentifier()]
+            ['ticketId' => $id]
         );
     }
 
     protected function registerNewTicket(array $validData)
     {
-        $result = $this->commandBus->push(
-            new OpenNewTicket(
-                $validData['subject'],
-                $validData['description'],
-                $validData['importance'],
-                1, // @todo probably not needed
-                1  // @todo $this->authService->getIdentity()->getId()
-            )
+        $newTicket = new OpenNewTicket(
+            $validData['subject'],
+            $validData['description'],
+            $validData['importance'],
+            1, // @todo probably not needed
+            1  // @todo $this->authService->getIdentity()->getId()
         );
 
-        if ($result) {
-            return $this->redirect()->toRoute(
-                'ticket/view',
-                ['ticketId' => $result->getTicketId()->toString()]
-            );
-        }
+        $this->commandBus->push($newTicket);
+
+        return $this->redirect()->toRoute(
+            'ticket/view',
+            ['ticketId' => $newTicket->getUuid()]
+        );
     }
 }
