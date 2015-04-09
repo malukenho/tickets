@@ -16,16 +16,16 @@
  * and is licensed under the MIT license.
  */
 
-use Application\Command\Ticket\CommandBus;
-use Application\Factory\TicketCommandBus;
+use Support\Command\Ticket\CommandBus;
+use Support\Factory\TicketCommandBus;
 use Zend\Mvc\Router\Http\Literal;
-use Application\Controller\IndexController;
-use Application\Controller\TicketController;
+use Support\Controller\IndexController;
+use Support\Controller\TicketController;
 use Zend\Mvc\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Application\Command\Ticket\Handler;
-use Application\Listener\Authentication;
-use Application\Factory\TicketController as FactoryTicketController;
+use Support\Command\Ticket\Handler;
+use Support\Listener\Authentication;
+use Support\Factory\TicketController as FactoryTicketController;
 
 return [
     'router' => [

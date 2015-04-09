@@ -1,6 +1,6 @@
 <?php
 
-use Application\Listener\Authentication;
+use Support\Listener\Authentication;
 
 return [
     'modules' => [
